@@ -10,6 +10,8 @@ import java.util.Properties;
 public class Main {
     static void main() {
 
+        // Configuración para enviar el correo
+
         Properties props = new Properties();
         props.put("mail.smtp.host", "sandbox.smtp.mailtrap.io"); // host address
         props.put("mail.smtp.port", "25"); // puerto
@@ -28,8 +30,18 @@ public class Main {
             msg.setFrom(new InternetAddress("prueba@java.com"));
             msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse("destino@cualqiera.com"));
 
+            msg.setSubject("prueba Mailtrap"); // asunto
+            msg.setText("Si ves esto es que funciona"); // cuerpo del mensaje
+
+            Transport.send(msg); // enviar el mensaje
+            IO.println("Enviadp. Revisa la bandeja de Mailtrap");
+
         } catch (MessagingException e) {
             e.printStackTrace();
         }
+
+        // Configuración para recibir el correo
+
+
     }
 }
