@@ -14,7 +14,7 @@ public class Main {
 
         Properties props = new Properties();
         props.put("mail.smtp.host", "sandbox.smtp.mailtrap.io"); // host address
-        props.put("mail.smtp.port", "25"); // puerto
+        props.put("mail.smtp.port", "2525"); // puerto
         props.put("mail.smtp.auth", "true"); // habilitar autenticación
         props.put("mail.smtp.starttls.enable", "true"); // habilitar STARTTLS
 
@@ -42,6 +42,29 @@ public class Main {
 
         // Configuración para recibir el correo
 
+        Properties propsRecenpcion = new Properties();
+        propsRecenpcion.put("mail.pop3.host", "pop3.mailtrap.io");
+        propsRecenpcion.put("mail.pop3.port", "1100");
+        propsRecenpcion.put("mail.pop3.starttls.enable", "true");
 
+        Session sessionRecepcion = Session.getInstance(propsRecenpcion);
+        try {
+            Store store = sessionRecepcion.getStore("pop3");
+            store.connect("pop3.mailtrap.io", 1100,"4bb29203af79c3", "1841e2be21dd50");
+
+            Folder inbox = store.getFolder("INBOX");
+            inbox.open(Folder.READ_ONLY);
+
+            Message[] mensajes = inbox.getMessages();
+            for (Message mensaje : mensajes) {
+                IO.println("Asunto: " + mensaje.getSubject());
+            }
+
+
+        } catch (NoSuchProviderException e) {
+            throw new RuntimeException(e);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
