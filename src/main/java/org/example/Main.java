@@ -1,14 +1,35 @@
 package org.example;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import jakarta.mail.*;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
+
+import java.net.InetAddress;
+import java.util.Properties;
+
 public class Main {
     static void main() {
 
-        IO.println(String.format("Hello and welcome!"));
+        Properties props = new Properties();
+        props.put("mail.smtp.host", "sandbox.smtp.mailtrap.io"); // host address
+        props.put("mail.smtp.port", "25"); // puerto
+        props.put("mail.smtp.auth", "true"); // habilitar autenticación
+        props.put("mail.smtp.starttls.enable", "true"); // habilitar STARTTLS
 
-        for (int i = 1; i <= 5; i++) {
-            IO.println("i = " + i);
+        Session session = Session.getInstance(props, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication("4bb29203af79c3", "1841e2be21dd50");
+            };
+        });
+
+        try {
+            MimeMessage msg = new MimeMessage(session);
+            msg.setFrom(new InternetAddress("prueba@java.com"));
+            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse("destino@cualqiera.com"));
+
+        } catch (MessagingException e) {
+            e.printStackTrace();
         }
     }
 }
