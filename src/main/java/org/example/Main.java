@@ -23,7 +23,7 @@ public class Main {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(usuario, contrasena);
-            };
+            }
         });
 
         try {
@@ -31,14 +31,14 @@ public class Main {
             msg.setFrom(new InternetAddress("prueba@java.com"));
             msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse("destino@cualqiera.com"));
 
-            msg.setSubject("prueba Mailtrap"); // asunto
-            msg.setText("Si ves esto es que funciona"); // cuerpo del mensaje
+            msg.setSubject("Prueba de Agente - [Dani]"); // asunto
+            msg.setText("El sistema de notificaciones está activo"); // cuerpo del mensaje
 
             Transport.send(msg); // enviar el mensaje
             IO.println("Enviado. Revisa la bandeja de Mailtrap");
 
         } catch (MessagingException e) {
-            e.printStackTrace();
+            IO.println("Error al enviar el correo: " + e.getMessage());
         }
 
         IO.println("---------------------------");
@@ -55,7 +55,7 @@ public class Main {
             store.connect("pop3.mailtrap.io", 1100,usuario, contrasena);
 
             Folder inbox = store.getFolder("INBOX");
-            inbox.open(Folder.READ_ONLY);
+            inbox.open(Folder.READ_WRITE);
 
             Message[] mensajes = inbox.getMessages();
             IO.println("Tienes " + mensajes.length + " mensajes.");
@@ -63,11 +63,11 @@ public class Main {
             for (Message mensaje : mensajes) {
                 IO.println("De: " + mensaje.getFrom()[0].toString());
                 IO.println("Asunto: " + mensaje.getSubject());
+                //mensaje.setFlag(Flags.Flag.DELETED, true);
             }
+            inbox.close(false); // true para eliminar mensajes marcados y false para no eliminarlos, pero ahora no hace nada
+            store.close();
 
-
-        } catch (NoSuchProviderException e) {
-            throw new RuntimeException(e);
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
