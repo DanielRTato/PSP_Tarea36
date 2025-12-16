@@ -4,24 +4,25 @@ import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 
-import java.net.InetAddress;
 import java.util.Properties;
 
 public class Main {
     static void main() {
 
+        final String usuario = "4bb29203af79c3";
+        final String contrasena = "1841e2be21dd50";
+
         // Configuración para enviar el correo
+        Properties propsenvio = new Properties();
+        propsenvio.put("mail.smtp.host", "sandbox.smtp.mailtrap.io"); // host address
+        propsenvio.put("mail.smtp.port", "2525"); // puerto
+        propsenvio.put("mail.smtp.auth", "true"); // habilitar autenticación
+        propsenvio.put("mail.smtp.starttls.enable", "true"); // habilitar STARTTLS
 
-        Properties props = new Properties();
-        props.put("mail.smtp.host", "sandbox.smtp.mailtrap.io"); // host address
-        props.put("mail.smtp.port", "2525"); // puerto
-        props.put("mail.smtp.auth", "true"); // habilitar autenticación
-        props.put("mail.smtp.starttls.enable", "true"); // habilitar STARTTLS
-
-        Session session = Session.getInstance(props, new Authenticator() {
+        Session session = Session.getInstance(propsenvio, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("4bb29203af79c3", "1841e2be21dd50");
+                return new PasswordAuthentication(usuario, contrasena);
             };
         });
 
@@ -34,14 +35,15 @@ public class Main {
             msg.setText("Si ves esto es que funciona"); // cuerpo del mensaje
 
             Transport.send(msg); // enviar el mensaje
-            IO.println("Enviadp. Revisa la bandeja de Mailtrap");
+            IO.println("Enviado. Revisa la bandeja de Mailtrap");
 
         } catch (MessagingException e) {
             e.printStackTrace();
         }
 
-        // Configuración para recibir el correo
+        IO.println("---------------------------");
 
+        // Configuración para recibir el correo
         Properties propsRecenpcion = new Properties();
         propsRecenpcion.put("mail.pop3.host", "pop3.mailtrap.io");
         propsRecenpcion.put("mail.pop3.port", "1100");
@@ -50,13 +52,16 @@ public class Main {
         Session sessionRecepcion = Session.getInstance(propsRecenpcion);
         try {
             Store store = sessionRecepcion.getStore("pop3");
-            store.connect("pop3.mailtrap.io", 1100,"4bb29203af79c3", "1841e2be21dd50");
+            store.connect("pop3.mailtrap.io", 1100,usuario, contrasena);
 
             Folder inbox = store.getFolder("INBOX");
             inbox.open(Folder.READ_ONLY);
 
             Message[] mensajes = inbox.getMessages();
+            IO.println("Tienes " + mensajes.length + " mensajes.");
+
             for (Message mensaje : mensajes) {
+                IO.println("De: " + mensaje.getFrom()[0].toString());
                 IO.println("Asunto: " + mensaje.getSubject());
             }
 
